@@ -1,10 +1,748 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DevOps Demo</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Omni Chat</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<style>
+:root{
+  --bg:#0f172a;
+  --bg2:#111827;
+  --bg3:#1e293b;
+  --card:#1f2937;
+  --border:#334155;
+  --text:#f8fafc;
+  --text2:#94a3b8;
+  --primary:#3b82f6;
+  --green:#22c55e;
+  --wa:#25D366;
+  --ig:#E4405F;
+  --fb:#1877F2;
+  --danger:#ef4444;
+  --radius:16px;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Inter, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  overflow:hidden;
+}
+
+.app{
+  display:flex;
+  height:100vh;
+}
+
+/* LEFT SIDEBAR */
+
+.sidebar{
+  width:340px;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+}
+
+.sidebar-header{
+  padding:20px;
+  border-bottom:1px solid var(--border);
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+
+.logo-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo-icon{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+}
+
+.icon-btn{
+  width:38px;
+  height:38px;
+  border:none;
+  background:var(--bg3);
+  border-radius:12px;
+  color:var(--text);
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.icon-btn:hover{
+  background:var(--primary);
+}
+
+.search{
+  height:44px;
+  background:var(--bg3);
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  gap:10px;
+}
+
+.search input{
+  background:none;
+  border:none;
+  outline:none;
+  color:white;
+  width:100%;
+}
+
+.filters{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+
+.filter{
+  padding:8px 14px;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text2);
+  font-size:12px;
+  cursor:pointer;
+}
+
+.filter.active{
+  background:var(--primary);
+  color:white;
+  border:none;
+}
+
+.chat-list{
+  flex:1;
+  overflow:auto;
+  padding:14px;
+}
+
+.chat-card{
+  background:var(--card);
+  border:1px solid transparent;
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:0.25s;
+}
+
+.chat-card:hover{
+  transform:translateY(-2px);
+  border-color:var(--primary);
+}
+
+.chat-card.active{
+  border-color:var(--primary);
+  background:#172554;
+}
+
+.chat-top{
+  display:flex;
+  gap:12px;
+}
+
+.avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#ec4899,#8b5cf6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  position:relative;
+  flex-shrink:0;
+}
+
+.online{
+  width:12px;
+  height:12px;
+  background:var(--green);
+  border:2px solid var(--card);
+  border-radius:50%;
+  position:absolute;
+  right:0;
+  bottom:0;
+}
+
+.chat-info{
+  flex:1;
+  min-width:0;
+}
+
+.chat-name{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+}
+
+.chat-name h4{
+  font-size:14px;
+}
+
+.chat-name span{
+  color:var(--text2);
+  font-size:11px;
+}
+
+.chat-message{
+  color:var(--text2);
+  font-size:13px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.tags{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.tag{
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:20px;
+}
+
+.tag.wa{
+  background:rgba(37,211,102,0.15);
+  color:var(--wa);
+}
+
+.tag.ig{
+  background:rgba(228,64,95,0.15);
+  color:var(--ig);
+}
+
+/* MAIN CHAT */
+
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  background:var(--bg);
+}
+
+.main-header{
+  height:80px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 24px;
+  background:rgba(15,23,42,0.8);
+  backdrop-filter:blur(12px);
+}
+
+.user{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.user h3{
+  font-size:15px;
+}
+
+.user p{
+  font-size:12px;
+  color:var(--text2);
+  margin-top:4px;
+}
+
+.header-actions{
+  display:flex;
+  gap:10px;
+}
+
+.messages{
+  flex:1;
+  overflow:auto;
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.msg{
+  display:flex;
+  gap:10px;
+  max-width:70%;
+}
+
+.msg.outgoing{
+  margin-left:auto;
+  flex-direction:row-reverse;
+}
+
+.bubble{
+  padding:14px 16px;
+  border-radius:18px;
+  font-size:14px;
+  line-height:1.4;
+}
+
+.incoming .bubble{
+  background:var(--card);
+  border-bottom-left-radius:4px;
+}
+
+.outgoing .bubble{
+  background:var(--primary);
+  border-bottom-right-radius:4px;
+}
+
+.time{
+  margin-top:8px;
+  font-size:11px;
+  opacity:0.7;
+}
+
+.chat-input{
+  padding:18px 24px;
+  border-top:1px solid var(--border);
+  background:var(--bg2);
+}
+
+.input-wrap{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.message-box{
+  flex:1;
+  background:var(--bg3);
+  border:none;
+  outline:none;
+  border-radius:16px;
+  padding:14px;
+  color:white;
+  font-size:14px;
+}
+
+.send-btn{
+  width:48px;
+  height:48px;
+  border:none;
+  border-radius:16px;
+  background:var(--primary);
+  color:white;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.send-btn:hover{
+  transform:scale(1.05);
+}
+
+/* RIGHT PANEL */
+
+.rightbar{
+  width:320px;
+  background:var(--bg2);
+  border-left:1px solid var(--border);
+  overflow:auto;
+}
+
+.profile{
+  padding:28px 20px;
+  border-bottom:1px solid var(--border);
+  text-align:center;
+}
+
+.profile .avatar{
+  width:80px;
+  height:80px;
+  margin:auto;
+  font-size:24px;
+}
+
+.profile h3{
+  margin-top:16px;
+}
+
+.profile p{
+  color:var(--text2);
+  margin-top:6px;
+  font-size:13px;
+}
+
+.section{
+  padding:20px;
+  border-bottom:1px solid var(--border);
+}
+
+.section-title{
+  font-size:13px;
+  margin-bottom:14px;
+  color:var(--text2);
+  text-transform:uppercase;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.stat{
+  background:var(--card);
+  border-radius:16px;
+  padding:16px;
+  text-align:center;
+}
+
+.stat h2{
+  margin-top:8px;
+}
+
+.action{
+  width:100%;
+  padding:14px;
+  background:var(--card);
+  border:none;
+  border-radius:14px;
+  color:white;
+  margin-bottom:10px;
+  cursor:pointer;
+  text-align:left;
+  transition:0.2s;
+}
+
+.action:hover{
+  background:var(--primary);
+}
+
+.media{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.media div{
+  aspect-ratio:1;
+  border-radius:12px;
+  background:var(--card);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text2);
+}
+
+::-webkit-scrollbar{
+  width:6px;
+}
+
+::-webkit-scrollbar-thumb{
+  background:var(--border);
+  border-radius:20px;
+}
+
+@media(max-width:1200px){
+  .rightbar{
+    display:none;
+  }
+}
+
+@media(max-width:900px){
+  .sidebar{
+    width:90px;
+  }
+
+  .sidebar .search,
+  .sidebar .filters,
+  .chat-info,
+  .tags{
+    display:none;
+  }
+
+  .chat-card{
+    padding:10px;
+  }
+}
+</style>
 </head>
+
 <body>
-    <h1>Automated Deployment Successful</h1>
-    <p>Docker + Kubernetes + GitHub Actions</p>
+
+<div class="app">
+
+  <!-- LEFT -->
+  <aside class="sidebar">
+
+    <div class="sidebar-header">
+
+      <div class="logo">
+        <div class="logo-left">
+          <div class="logo-icon">OC</div>
+          <h2>OmniChat</h2>
+        </div>
+
+        <button class="icon-btn">
+          <i class="ti ti-settings"></i>
+        </button>
+      </div>
+
+      <div class="search">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Search..." />
+      </div>
+
+      <div class="filters">
+        <button class="filter active">All</button>
+        <button class="filter">WhatsApp</button>
+        <button class="filter">Instagram</button>
+      </div>
+
+    </div>
+
+    <div class="chat-list">
+
+      <div class="chat-card active">
+        <div class="chat-top">
+          <div class="avatar">
+            SS
+            <div class="online"></div>
+          </div>
+
+          <div class="chat-info">
+            <div class="chat-name">
+              <h4>Sansoftware</h4>
+              <span>2m</span>
+            </div>
+
+            <div class="chat-message">
+              Looking forward to the project 🚀
+            </div>
+
+            <div class="tags">
+              <span class="tag ig">Instagram</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-card">
+        <div class="chat-top">
+          <div class="avatar">
+            WA
+          </div>
+
+          <div class="chat-info">
+            <div class="chat-name">
+              <h4>+91 9876543210</h4>
+              <span>1h</span>
+            </div>
+
+            <div class="chat-message">
+              Let's schedule a call
+            </div>
+
+            <div class="tags">
+              <span class="tag wa">WhatsApp</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="main-header">
+
+      <div class="user">
+        <div class="avatar">
+          SS
+          <div class="online"></div>
+        </div>
+
+        <div>
+          <h3>Sansoftware</h3>
+          <p>Active now</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn">
+          <i class="ti ti-phone"></i>
+        </button>
+
+        <button class="icon-btn">
+          <i class="ti ti-video"></i>
+        </button>
+
+        <button class="icon-btn">
+          <i class="ti ti-dots"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="messages">
+
+      <div class="msg incoming">
+        <div class="avatar">SS</div>
+
+        <div class="bubble">
+          Hey! Can we discuss the timeline?
+          <div class="time">10:45 AM</div>
+        </div>
+      </div>
+
+      <div class="msg outgoing">
+        <div class="avatar">ME</div>
+
+        <div class="bubble">
+          Sure! I'll prepare everything.
+          <div class="time">10:46 AM ✓✓</div>
+        </div>
+      </div>
+
+      <div class="msg incoming">
+        <div class="avatar">SS</div>
+
+        <div class="bubble">
+          Perfect 🚀
+          <div class="time">10:47 AM</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="chat-input">
+
+      <div class="input-wrap">
+
+        <button class="icon-btn">
+          <i class="ti ti-paperclip"></i>
+        </button>
+
+        <input class="message-box" placeholder="Type a message..." />
+
+        <button class="icon-btn">
+          <i class="ti ti-mood-smile"></i>
+        </button>
+
+        <button class="send-btn">
+          <i class="ti ti-send"></i>
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- RIGHT -->
+  <aside class="rightbar">
+
+    <div class="profile">
+
+      <div class="avatar">
+        SS
+      </div>
+
+      <h3>Sansoftware</h3>
+
+      <p>
+        Instagram Contact
+      </p>
+
+    </div>
+
+    <div class="section">
+
+      <div class="section-title">
+        Statistics
+      </div>
+
+      <div class="stats">
+
+        <div class="stat">
+          <p>Messages</p>
+          <h2>87</h2>
+        </div>
+
+        <div class="stat">
+          <p>Avg Reply</p>
+          <h2>2h</h2>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="section">
+
+      <div class="section-title">
+        Actions
+      </div>
+
+      <button class="action">
+        🔔 Mute Notifications
+      </button>
+
+      <button class="action">
+        📦 Archive Chat
+      </button>
+
+      <button class="action">
+        🏷 Add Label
+      </button>
+
+    </div>
+
+    <div class="section">
+
+      <div class="section-title">
+        Shared Media
+      </div>
+
+      <div class="media">
+        <div><i class="ti ti-photo"></i></div>
+        <div><i class="ti ti-photo"></i></div>
+        <div>+5</div>
+      </div>
+
+    </div>
+
+  </aside>
+
+</div>
+
 </body>
 </html>
